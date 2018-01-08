@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Example</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    
+
+    <!-- Custom styles for this template -->
+    <link href="https://v4-alpha.getbootstrap.com/examples/jumbotron/jumbotron.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Example</a>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        
+        </div>
+    </nav>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">Predictor</h1>
+            <!-- <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron
+                and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+            <p>
+                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a>
+            </p> -->
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Predict</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="open">Open:</label>
+                        <input type="open" class="form-control" id="open" required>
+                    </div>
+                    <button id="predictBtn" type="button" onclick="predict()" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <br><br><br>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Add to CSV</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="openAdd">Open:</label>
+                        <input type="open" class="form-control" id="openAdd" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="high">High:</label>
+                        <input type="high" class="form-control" id="high" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="low">Low:</label>
+                        <input type="low" class="form-control" id="low" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="close">Close:</label>
+                        <input type="close" class="form-control" id="close" required>
+                    </div>
+                    <button id="addBtn" type="button" onclick="add()" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <hr>
+
+        <footer>
+            <p>&copy; 2017</p>
+        </footer>
+    </div>
+    <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="https://v4-alpha.getbootstrap.com/dist/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        toastr.options.timeOut = 3000;
+        function add(){
+            let open = $('#openAdd').val();
+            let close = $('#close').val();
+            let high = $('#high').val();
+            let low = $('#low').val();
+            $.ajax({
+                method: "POST",
+                url: "/add",
+                data: {"open": open, "close": close, "high": high, "low": low },
+               success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.success(data.data);
+                    } else {
+                        toastr.error('Failed to get prediction');
+                    }
+                    $('#openAdd').val("");
+                    $('#high').val("");
+                    $('#low').val("");
+                    $('#close').val("");
+                    $("#addBtn").removeAttr("disabled");
+                },
+                error: function (err) {
+                    $('#openAdd').val("");
+                    $('#high').val("");
+                    $('#low').val("");
+                    $('#close').val("");
+                    $("#addBtn").removeAttr("disabled");
+                }
+            });
+        }
+
+        function predict(){
+            let open = $('#open').val();
+            $("#predictBtn").attr("disabled", "disabled");
+            $.ajax({
+                method: "POST",
+                url: "/predict",
+                data: {"open": open},
+                success: function(data) {
+                    if(data.status == 'success'){
+                        if(data.data == "up"){
+                            toastr.success(data.data);
+                        }else{
+                            toastr.error(data.data);
+                        }
+                    }else{
+                        toastr.error('Failed to get prediction');
+                    }
+                    $('#open').val("");
+                    $("#predictBtn").removeAttr("disabled");
+                },
+                error: function(err) {
+                    $('#open').val("");
+                    $("#predictBtn").removeAttr("disabled");
+                }
+            });
+        }
+    </script>   
+    
+</body>
+
+</html>
