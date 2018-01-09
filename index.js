@@ -42,7 +42,7 @@ var http = require("http"),
         console.log("computing....")
 
         console.log(r.body.open);
-        pyshell.send(JSON.stringify([parseInt(r.body.open)]));
+        pyshell.send(JSON.stringify([r.body.open]));
         
         pyshell.on('message', function (message) {
             messages += message;
