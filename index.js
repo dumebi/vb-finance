@@ -49,6 +49,7 @@ var http = require("http"),
         });
 
         pyshell.end(function (err) {
+            console.log(err);
             if (err) {
                 return s.json({ status: 'failed', data: err });
             };
