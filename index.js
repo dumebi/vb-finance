@@ -6,7 +6,7 @@ var http = require("http"),
     var PythonShell = require('python-shell');
     const express = require('express')
     const app = express()
-    const port = 3000
+    const port = process.env.PORT_APP
     
     var engines = require('consolidate');
 
@@ -16,6 +16,7 @@ var http = require("http"),
     var bodyParser = require('body-parser');
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(bodyParser.json())
+    require('dotenv').config();
 
     
     app.get('/', (request, response, next) => {
