@@ -6,7 +6,7 @@ var http = require("http"),
     var PythonShell = require('python-shell');
     const express = require('express')
     const app = express()
-    const port = process.env.PORT_APP
+    const port = process.env.PORT
     
     var engines = require('consolidate');
 
