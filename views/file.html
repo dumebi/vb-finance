@@ -71,18 +71,25 @@
                         <input type="open" class="form-control" id="openAdd" required>
                     </div>
                     <div class="form-group">
-                        <label for="high">High:</label>
-                        <input type="high" class="form-control" id="high" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="low">Low:</label>
-                        <input type="low" class="form-control" id="low" required>
-                    </div>
-                    <div class="form-group">
                         <label for="close">Close:</label>
                         <input type="close" class="form-control" id="close" required>
                     </div>
                     <button id="addBtn" type="button" onclick="add()" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <br><br><br>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Upload CSV</h2>
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="upload">Upload:</label>
+                        <input name="upload" type="file" class="form-control" id="upload" required>
+                    </div>
+                <button id="uploadBtn" type="submit" class="btn btn-primary">Upload</button>
                 </form>
             </div>
         </div>
@@ -110,12 +117,10 @@
         function add(){
             let open = $('#openAdd').val();
             let close = $('#close').val();
-            let high = $('#high').val();
-            let low = $('#low').val();
             $.ajax({
                 method: "POST",
                 url: "/add",
-                data: {"open": open, "close": close, "high": high, "low": low },
+                data: {"open": open, "close": close },
                success: function (data) {
                     if (data.status == 'success') {
                         toastr.success(data.data);
@@ -123,15 +128,11 @@
                         toastr.error('Failed to get prediction');
                     }
                     $('#openAdd').val("");
-                    $('#high').val("");
-                    $('#low').val("");
                     $('#close').val("");
                     $("#addBtn").removeAttr("disabled");
                 },
                 error: function (err) {
                     $('#openAdd').val("");
-                    $('#high').val("");
-                    $('#low').val("");
                     $('#close').val("");
                     $("#addBtn").removeAttr("disabled");
                 }
@@ -164,6 +165,29 @@
                 }
             });
         }
+
+        // function uploadCSV(){
+        // let upload = $('#upload').val();
+        // $("#uploadBtn").attr("disabled", "disabled");
+        //     $.ajax({
+        //         method: "POST",
+        //         url: "/upload",
+        //         data: {"upload": upload},
+        //         success: function(data) {
+        //             if (data.status == 'success') {
+        //                 toastr.success(data.data);
+        //             } else {
+        //                 toastr.error('Failed to upload');
+        //             }
+        //             $('#upload').val("");
+        //             $("#uploadBtn").removeAttr("disabled");
+        //         },
+        //         error: function(err) {
+        //             $('#upload').val("");
+        //             $("#uploadBtn").removeAttr("disabled");
+        //         }
+        //     });
+        // }
     </script>   
     
 </body>

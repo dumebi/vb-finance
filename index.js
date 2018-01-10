@@ -6,7 +6,7 @@ var http = require("http"),
     var PythonShell = require('python-shell');
     const express = require('express')
     const app = express()
-    const port = process.env.PORT
+    const port = process.env.PORT || 3000
     
     var engines = require('consolidate');
 
@@ -17,7 +17,22 @@ var http = require("http"),
     app.use(bodyParser.urlencoded({ extended: false }))
     app.use(bodyParser.json())
     require('dotenv').config();
-
+    var multer = require('multer');
+    var storage = multer.diskStorage({
+        destination: function (req, file, callback) {
+            fs.unlink('./AUDJPY.csv');
+            callback(null, './');
+        },
+        filename: function (req, file, callback) {
+            var originalname = file.originalname;
+            var extension = originalname.split(".");
+            filename = "AUDJPY" + '.' + extension[extension.length-1];
+            callback(null, filename);
+        }
+    });
+    var upload = multer({
+        storage: storage
+    }).single('upload');
     
     app.get('/', (request, response, next) => {
         response.render('file');
@@ -34,6 +49,10 @@ var http = require("http"),
             console.log('Saved!');
             return s.json({ status: 'success', data: "Saved" });
         });
+    });
+
+    app.post('/upload', upload, (r, s, n) => {
+        return s.redirect('/');
     });
 
     app.post('/predict', (r, s, n) => {
