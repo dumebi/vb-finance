@@ -47,20 +47,6 @@
 
     <div class="container">
         <!-- Example row of columns -->
-        <div class="row">
-            <div class="col-md-12">
-                <h2>Predict</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="open">Open:</label>
-                        <input type="open" class="form-control" id="open" required>
-                    </div>
-                    <button id="predictBtn" type="button" onclick="predict()" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
-
-        <br><br><br>
         
         <div class="row">
             <div class="col-md-12">
@@ -115,6 +101,7 @@
     <script>
         toastr.options.timeOut = 3000;
         function add(){
+            $("#addBtn").attr("disabled", "disabled");
             let open = $('#openAdd').val();
             let close = $('#close').val();
             $.ajax({
@@ -135,33 +122,6 @@
                     $('#openAdd').val("");
                     $('#close').val("");
                     $("#addBtn").removeAttr("disabled");
-                }
-            });
-        }
-
-        function predict(){
-            let open = $('#open').val();
-            $("#predictBtn").attr("disabled", "disabled");
-            $.ajax({
-                method: "POST",
-                url: "/predict",
-                data: {"open": open},
-                success: function(data) {
-                    if(data.status == 'success'){
-                        if(data.data == "up"){
-                            toastr.success(data.data);
-                        }else{
-                            toastr.error(data.data);
-                        }
-                    }else{
-                        toastr.error('Failed to get prediction');
-                    }
-                    $('#open').val("");
-                    $("#predictBtn").removeAttr("disabled");
-                },
-                error: function(err) {
-                    $('#open').val("");
-                    $("#predictBtn").removeAttr("disabled");
                 }
             });
         }

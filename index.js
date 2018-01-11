@@ -46,35 +46,35 @@ var http = require("http"),
         var data = "1" + "," + "1" + "," + open + "," + high + "," + low + "," + close + "," + "1";
         fs.appendFile('AUDJPY.csv', "\n" + data, function (err) {
             if (err) return s.json({ status: 'failed', data: err });;
-            console.log('Saved!');
-            return s.json({ status: 'success', data: "Saved" });
+            var pyshell = new PythonShell('work.py');
+            var messages = "";
+            console.log("computing....")
+            console.log(close);
+            pyshell.send(JSON.stringify([parseInt(close)]));
+
+            pyshell.on('message', function (message) {
+                messages += message;
+                console.log(message);
+            });
+
+            pyshell.end(function (err) {
+                if (err) {
+                    return s.json({
+                        status: 'failed',
+                        data: err
+                    });
+                };
+                return s.json({
+                    status: 'success',
+                    data: messages
+                });
+                console.log('finished');
+            });
         });
     });
 
     app.post('/upload', upload, (r, s, n) => {
         return s.redirect('/');
-    });
-
-    app.post('/predict', (r, s, n) => {
-        var pyshell = new PythonShell('work.py');
-        var messages = "";
-        console.log("computing....")
-
-        console.log(r.body.open);
-        pyshell.send(JSON.stringify([parseInt(r.body.open)]));
-        
-        pyshell.on('message', function (message) {
-            messages += message;
-        });
-
-        pyshell.end(function (err) {
-            console.log(err);
-            if (err) {
-                return s.json({ status: 'failed', data: err });
-            };
-            return s.json({ status: 'success', data: messages });
-            console.log('finished');
-        });
     });
     
     app.listen(port, (err) => {
